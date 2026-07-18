@@ -1,0 +1,90 @@
+{
+  "name": "hanydaw-ms-plugins",
+  "owner": {
+    "name": "HanyDaw"
+  },
+  "metadata": {
+    "description": "Marketplace aggregating Microsoft's Power Platform and Copilot Studio plugins for Claude Code"
+  },
+  "plugins": [
+    {
+      "name": "power-pages",
+      "source": {
+        "source": "git-subdir",
+        "url": "microsoft/power-platform-skills",
+        "path": "plugins/power-pages"
+      },
+      "description": "Skills, agents, and commands for building and deploying Power Pages sites (React/Angular/Vue/Astro)",
+      "category": "power-platform"
+    },
+    {
+      "name": "model-apps",
+      "source": {
+        "source": "git-subdir",
+        "url": "microsoft/power-platform-skills",
+        "path": "plugins/model-apps"
+      },
+      "description": "Skills for building generative pages for Power Platform model-driven apps",
+      "category": "power-platform"
+    },
+    {
+      "name": "mcp-apps",
+      "source": {
+        "source": "git-subdir",
+        "url": "microsoft/power-platform-skills",
+        "path": "plugins/mcp-apps"
+      },
+      "description": "Skills for generating interactive MCP-based widget apps for Power Platform",
+      "category": "power-platform"
+    },
+    {
+      "name": "canvas-apps",
+      "source": {
+        "source": "git-subdir",
+        "url": "microsoft/power-platform-skills",
+        "path": "plugins/canvas-apps"
+      },
+      "description": "Skills for authoring Power Apps canvas apps in YAML via MCP server",
+      "category": "power-platform"
+    },
+    {
+      "name": "code-apps-preview",
+      "source": {
+        "source": "git-subdir",
+        "url": "microsoft/power-platform-skills",
+        "path": "plugins/code-apps"
+      },
+      "description": "Skills for building code apps connected to Power Platform",
+      "category": "power-platform"
+    },
+    {
+      "name": "mobile-app",
+      "source": {
+        "source": "git-subdir",
+        "url": "microsoft/power-platform-skills",
+        "path": "plugins/mobile-apps"
+      },
+      "description": "Skills for building Expo-based native mobile apps connected to Power Platform",
+      "category": "power-platform"
+    },
+    {
+      "name": "power-automate",
+      "source": {
+        "source": "git-subdir",
+        "url": "microsoft/power-platform-skills",
+        "path": "plugins/power-automate"
+      },
+      "description": "Skills for building and debugging Power Automate cloud flows",
+      "category": "power-platform"
+    },
+    {
+      "name": "copilot-studio",
+      "source": {
+        "source": "github",
+        "repo": "microsoft/skills-for-copilot-studio"
+      },
+      "description": "Microsoft Copilot Studio YAML authoring toolkit: create, edit, validate, and test Copilot Studio agents using YAML files",
+      "category": "copilot-studio"
+    }
+  ]
+}
