@@ -3,109 +3,211 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Passwortgenerator</title>
+<title>Schlüsselbund</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
   :root {
-    --bg-1: #1e1b4b;
-    --bg-2: #4c1d95;
-    --card-bg: rgba(255, 255, 255, 0.08);
-    --card-border: rgba(255, 255, 255, 0.15);
-    --text: #f1f5f9;
-    --text-muted: #b8b8d1;
-    --accent: #8b5cf6;
-    --accent-hover: #7c3aed;
-    --success: #22c55e;
-    --error: #f87171;
-    --input-bg: rgba(0, 0, 0, 0.25);
+    --ink: #f4f1e9;
+    --surface: #ffffff;
+    --surface-2: #ece7d9;
+    --border: #ddd5bf;
+    --text: #211f19;
+    --text-muted: #6c6656;
+    --accent: #a3691f;
+    --accent-strong: #7d4f15;
+    --accent-on: #fffaf1;
+    --good: #2f8f5b;
+    --good-bg: #e3f2e9;
+    --bad: #c4453b;
+    --bad-bg: #fbe8e6;
+    --shadow: rgba(60, 45, 20, 0.14);
   }
 
-  * {
-    box-sizing: border-box;
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #14141a;
+      --surface: #1c1c24;
+      --surface-2: #23232d;
+      --border: #34343f;
+      --text: #ece9e2;
+      --text-muted: #93909e;
+      --accent: #d99a4e;
+      --accent-strong: #eab06a;
+      --accent-on: #1c1408;
+      --good: #6fbf8f;
+      --good-bg: rgba(111, 191, 143, 0.14);
+      --bad: #e58a83;
+      --bad-bg: rgba(229, 138, 131, 0.14);
+      --shadow: rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ink: #14141a;
+    --surface: #1c1c24;
+    --surface-2: #23232d;
+    --border: #34343f;
+    --text: #ece9e2;
+    --text-muted: #93909e;
+    --accent: #d99a4e;
+    --accent-strong: #eab06a;
+    --accent-on: #1c1408;
+    --good: #6fbf8f;
+    --good-bg: rgba(111, 191, 143, 0.14);
+    --bad: #e58a83;
+    --bad-bg: rgba(229, 138, 131, 0.14);
+    --shadow: rgba(0, 0, 0, 0.4);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: var(--ink);
   }
 
   body {
-    margin: 0;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    padding: 32px 20px;
+    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
     color: var(--text);
+    background-image:
+      radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0);
+    background-size: 26px 26px;
+    background-attachment: fixed;
   }
 
-  .card {
+  .panel {
     width: 100%;
-    max-width: 440px;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 20px;
-    padding: 32px;
-    backdrop-filter: blur(16px);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    max-width: 460px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: 0 18px 40px -12px var(--shadow);
+    overflow: hidden;
+  }
+
+  .panel-head {
+    padding: 26px 28px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+    margin: 0 0 10px;
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
   }
 
   h1 {
-    margin: 0 0 4px;
-    font-size: 1.6rem;
-    text-align: center;
+    margin: 0 0 6px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
   }
 
-  .subtitle {
-    margin: 0 0 28px;
-    text-align: center;
+  .panel-head p {
+    margin: 0;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    max-width: 40ch;
   }
 
-  .output-row {
+  .panel-body {
+    padding: 24px 28px 28px;
+  }
+
+  .readout {
     display: flex;
+    align-items: stretch;
     gap: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
   }
 
   #passwordOutput {
     flex: 1;
     min-width: 0;
     padding: 14px 16px;
-    font-size: 1.05rem;
-    font-family: 'Consolas', 'Courier New', monospace;
-    border-radius: 12px;
-    border: 1px solid var(--card-border);
-    background: var(--input-bg);
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 1.06rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
     color: var(--text);
-    letter-spacing: 0.5px;
+  }
+
+  #passwordOutput::placeholder {
+    color: var(--text-muted);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 400;
   }
 
   .icon-btn {
     flex-shrink: 0;
-    width: 50px;
-    border-radius: 12px;
-    border: 1px solid var(--card-border);
-    background: var(--input-bg);
+    width: 48px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
     color: var(--text);
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+    transition: border-color 0.15s, transform 0.1s, background 0.15s;
   }
 
-  .icon-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
+  .icon-btn:hover { border-color: var(--accent); }
+  .icon-btn:active { transform: scale(0.95); }
+  .icon-btn:focus-visible,
+  input:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
-  .icon-btn:active {
-    transform: scale(0.95);
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    margin: 0 2px 26px;
+    font-variant-numeric: tabular-nums;
   }
 
-  .field-group {
-    margin-bottom: 18px;
+  #entropyLabel { color: var(--text-muted); }
+
+  fieldset {
+    border: none;
+    margin: 0 0 22px;
+    padding: 0;
   }
 
-  label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
+  legend {
+    padding: 0;
+    margin-bottom: 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
     color: var(--text-muted);
   }
 
@@ -122,92 +224,112 @@
   }
 
   input[type="number"] {
-    width: 64px;
-    padding: 8px;
+    width: 60px;
+    padding: 8px 6px;
     text-align: center;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.95rem;
     border-radius: 8px;
-    border: 1px solid var(--card-border);
-    background: var(--input-bg);
+    border: 1px solid var(--border);
+    background: var(--surface-2);
     color: var(--text);
-    font-size: 1rem;
   }
 
   .checkbox-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 22px;
+    gap: 8px;
   }
 
   .checkbox-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
     padding: 10px 12px;
-    background: var(--input-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 9px;
     cursor: pointer;
     user-select: none;
-    font-size: 0.9rem;
-    transition: border-color 0.2s;
+    font-size: 0.86rem;
+    transition: border-color 0.15s;
   }
 
-  .checkbox-item:hover {
+  .checkbox-item:has(input:checked) {
     border-color: var(--accent);
   }
 
   .checkbox-item input {
     accent-color: var(--accent);
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
     cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .checkbox-item .set-chars {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    margin-left: auto;
   }
 
   .generate-btn {
     width: 100%;
-    padding: 14px;
-    font-size: 1rem;
+    padding: 13px;
+    font-family: inherit;
+    font-size: 0.95rem;
     font-weight: 600;
+    letter-spacing: 0.01em;
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     background: var(--accent);
-    color: #fff;
+    color: var(--accent-on);
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+    transition: background 0.15s, transform 0.1s;
   }
 
-  .generate-btn:hover {
-    background: var(--accent-hover);
-  }
-
-  .generate-btn:active {
-    transform: scale(0.98);
-  }
+  .generate-btn:hover { background: var(--accent-strong); }
+  .generate-btn:active { transform: scale(0.99); }
 
   .message {
-    min-height: 20px;
-    margin-top: 14px;
+    min-height: 18px;
+    margin-top: 12px;
     text-align: center;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
   }
 
-  .message.error {
-    color: var(--error);
-  }
-
-  .message.success {
-    color: var(--success);
-  }
+  .message.error { color: var(--bad); }
+  .message.success { color: var(--good); }
 
   .strength {
-    margin-top: 14px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .strength-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+
+  .strength-top span:first-child {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  #strengthLabel {
+    font-size: 0.82rem;
+    font-weight: 600;
   }
 
   .strength-bar {
-    height: 6px;
+    height: 5px;
     border-radius: 4px;
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
     overflow: hidden;
   }
 
@@ -215,77 +337,83 @@
     height: 100%;
     width: 0%;
     border-radius: 4px;
+    background: var(--bad);
     transition: width 0.3s ease, background 0.3s ease;
   }
 
-  .strength-label {
-    margin-top: 6px;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    text-align: right;
-  }
-
   @media (max-width: 480px) {
-    .card {
-      padding: 24px 20px;
-    }
-
-    .checkbox-grid {
-      grid-template-columns: 1fr;
-    }
+    .panel-head, .panel-body { padding-left: 20px; padding-right: 20px; }
+    .checkbox-grid { grid-template-columns: 1fr; }
+    .checkbox-item .set-chars { display: none; }
   }
 </style>
 </head>
 <body>
 
-<div class="card">
-  <h1>🔐 Passwortgenerator</h1>
-  <p class="subtitle">Erstelle sichere, individuelle Passwörter</p>
-
-  <div class="output-row">
-    <input type="text" id="passwordOutput" readonly placeholder="Dein Passwort erscheint hier">
-    <button class="icon-btn" id="copyBtn" title="In Zwischenablage kopieren">📋</button>
+<div class="panel">
+  <div class="panel-head">
+    <p class="eyebrow">Lokaler Generator</p>
+    <h1>Schlüsselbund</h1>
+    <p>Erzeugt zufällige Passwörter direkt im Browser mit <code>crypto.getRandomValues</code> — nichts verlässt dieses Gerät.</p>
   </div>
 
-  <div class="field-group">
-    <label for="lengthInput">Passwortlänge: <span id="lengthValue">16</span></label>
-    <div class="length-row">
-      <input type="range" id="lengthSlider" min="4" max="64" value="16">
-      <input type="number" id="lengthInput" min="4" max="64" value="16">
+  <div class="panel-body">
+    <div class="readout">
+      <input type="text" id="passwordOutput" readonly placeholder="Noch kein Passwort erzeugt" aria-label="Generiertes Passwort">
+      <button class="icon-btn" id="copyBtn" title="In Zwischenablage kopieren" aria-label="Passwort kopieren">⧉</button>
     </div>
-  </div>
-
-  <div class="field-group">
-    <label>Zeichenarten</label>
-    <div class="checkbox-grid">
-      <label class="checkbox-item">
-        <input type="checkbox" id="uppercase" checked>
-        Großbuchstaben (A-Z)
-      </label>
-      <label class="checkbox-item">
-        <input type="checkbox" id="lowercase" checked>
-        Kleinbuchstaben (a-z)
-      </label>
-      <label class="checkbox-item">
-        <input type="checkbox" id="numbers" checked>
-        Zahlen (0-9)
-      </label>
-      <label class="checkbox-item">
-        <input type="checkbox" id="symbols">
-        Sonderzeichen (!@#$…)
-      </label>
+    <div class="meta-row">
+      <span id="entropyLabel">—</span>
+      <span id="charCount">0 Zeichen</span>
     </div>
-  </div>
 
-  <button class="generate-btn" id="generateBtn">Passwort generieren</button>
+    <fieldset>
+      <legend>Länge: <span id="lengthValue">16</span> Zeichen</legend>
+      <div class="length-row">
+        <input type="range" id="lengthSlider" min="4" max="64" value="16" aria-label="Passwortlänge">
+        <input type="number" id="lengthInput" min="4" max="64" value="16" aria-label="Passwortlänge als Zahl">
+      </div>
+    </fieldset>
 
-  <div class="message" id="message"></div>
+    <fieldset>
+      <legend>Zeichenarten</legend>
+      <div class="checkbox-grid">
+        <label class="checkbox-item">
+          <input type="checkbox" id="uppercase" checked>
+          Großbuchstaben
+          <span class="set-chars">A–Z</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" id="lowercase" checked>
+          Kleinbuchstaben
+          <span class="set-chars">a–z</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" id="numbers" checked>
+          Zahlen
+          <span class="set-chars">0–9</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" id="symbols">
+          Sonderzeichen
+          <span class="set-chars">!@#$</span>
+        </label>
+      </div>
+    </fieldset>
 
-  <div class="strength">
-    <div class="strength-bar">
-      <div class="strength-fill" id="strengthFill"></div>
+    <button class="generate-btn" id="generateBtn">Neues Passwort erzeugen</button>
+
+    <div class="message" id="message" role="status"></div>
+
+    <div class="strength">
+      <div class="strength-top">
+        <span>Geschätzte Stärke</span>
+        <span id="strengthLabel"></span>
+      </div>
+      <div class="strength-bar">
+        <div class="strength-fill" id="strengthFill"></div>
+      </div>
     </div>
-    <div class="strength-label" id="strengthLabel"></div>
   </div>
 </div>
 
@@ -313,9 +441,11 @@
   const messageEl = document.getElementById('message');
   const strengthFill = document.getElementById('strengthFill');
   const strengthLabel = document.getElementById('strengthLabel');
+  const entropyLabel = document.getElementById('entropyLabel');
+  const charCount = document.getElementById('charCount');
 
   function syncLength(value) {
-    let clamped = Math.min(MAX_LENGTH, Math.max(MIN_LENGTH, Number(value) || MIN_LENGTH));
+    const clamped = Math.min(MAX_LENGTH, Math.max(MIN_LENGTH, Number(value) || MIN_LENGTH));
     lengthSlider.value = clamped;
     lengthInput.value = clamped;
     lengthValue.textContent = clamped;
@@ -354,7 +484,7 @@
     if (activeSets.length === 0) {
       showMessage('Bitte mindestens eine Zeichenart auswählen.', 'error');
       passwordOutput.value = '';
-      updateStrength('');
+      updateMeta('', 0);
       return;
     }
 
@@ -377,32 +507,37 @@
     const password = passwordChars.join('');
     passwordOutput.value = password;
     showMessage('Passwort erfolgreich generiert.', 'success');
-    updateStrength(password, activeSets.length);
+    updateMeta(password, allChars.length);
   }
 
-  function updateStrength(password, varietyCount) {
+  function updateMeta(password, poolSize) {
     if (!password) {
       strengthFill.style.width = '0%';
-      strengthFill.style.background = 'transparent';
       strengthLabel.textContent = '';
+      entropyLabel.textContent = '—';
+      charCount.textContent = '0 Zeichen';
       return;
     }
 
-    const score = Math.min(100, Math.round((password.length / MAX_LENGTH) * 60 + (varietyCount || 1) * 10));
-    let color = '#f87171';
-    let label = 'Schwach';
+    const bits = Math.round(password.length * Math.log2(poolSize));
+    entropyLabel.textContent = `~${bits} Bit Entropie`;
+    charCount.textContent = `${password.length} Zeichen`;
 
-    if (score >= 75) {
-      color = '#22c55e';
+    let color = 'var(--bad)';
+    let label = 'Schwach';
+    if (bits >= 80) {
+      color = 'var(--good)';
       label = 'Stark';
-    } else if (score >= 45) {
-      color = '#facc15';
+    } else if (bits >= 50) {
+      color = '#d9a441';
       label = 'Mittel';
     }
 
-    strengthFill.style.width = score + '%';
+    const fillPct = Math.min(100, Math.round((bits / 100) * 100));
+    strengthFill.style.width = fillPct + '%';
     strengthFill.style.background = color;
     strengthLabel.textContent = label;
+    strengthLabel.style.color = color;
   }
 
   async function copyPassword() {
