@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zahlen Memory</title>
+<style>
+  :root {
+    --bg: #eef1f6;
+    --surface: #ffffff;
+    --border: #dde2ec;
+    --text: #1c2333;
+    --text-muted: #5b6478;
+    --accent: #4f6df5;
+    --accent-dark: #3b53d1;
+    --card-back: #4f6df5;
+    --card-back-2: #6c86ff;
+    --card-matched: #22b57d;
+    --shadow: rgba(30, 41, 74, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: var(--bg);
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px;
+    font-family: "Segoe UI", Roboto, system-ui, -apple-system, sans-serif;
+    color: var(--text);
+  }
+
+  .app {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  header {
+    text-align: center;
+  }
+
+  h1 {
+    margin: 0 0 8px;
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+
+  .rules {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    line-height: 1.5;
+    max-width: 40ch;
+  }
+
+  .toolbar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 18px;
+    box-shadow: 0 8px 20px -10px var(--shadow);
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .stat-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #newGameBtn {
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: #fff;
+    background: var(--accent);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  #newGameBtn:hover { background: var(--accent-dark); }
+  #newGameBtn:active { transform: scale(0.97); }
+  #newGameBtn:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
+
+  .board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+  }
+
+  .card {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    perspective: 800px;
+    cursor: pointer;
+  }
+
+  .card.matched { cursor: default; }
+
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.35s ease;
+  }
+
+  .card.flipped .card-inner,
+  .card.matched .card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .card-face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    backface-visibility: hidden;
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+
+  .card-back {
+    background: linear-gradient(135deg, var(--card-back), var(--card-back-2));
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.4rem;
+  }
+
+  .card-front {
+    background: var(--surface);
+    border: 2px solid var(--accent);
+    color: var(--text);
+    transform: rotateY(180deg);
+  }
+
+  .card.matched .card-front {
+    border-color: var(--card-matched);
+    background: #eafaf3;
+    color: var(--card-matched);
+  }
+
+  .win-message {
+    width: 100%;
+    text-align: center;
+    padding: 14px 18px;
+    border-radius: 12px;
+    background: #eafaf3;
+    border: 1px solid var(--card-matched);
+    color: #1a7a56;
+    font-weight: 600;
+    display: none;
+  }
+
+  .win-message.show { display: block; }
+
+  @media (max-width: 380px) {
+    .card-face { font-size: 1.3rem; }
+    .toolbar { padding: 12px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <h1>Zahlen Memory</h1>
+    <p class="rules">
+      Decke zwei Karten auf. Zeigen beide dieselbe Zahl, bleiben sie offen.
+      Sonst drehen sie sich wieder um. Finde alle Paare mit möglichst wenigen Zügen.
+    </p>
+  </header>
+
+  <div class="toolbar">
+    <div class="stat">
+      <span class="stat-label">Züge</span>
+      <span class="stat-value" id="movesValue">0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Paare</span>
+      <span class="stat-value" id="pairsValue">0 / 8</span>
+    </div>
+    <button id="newGameBtn">Neues Spiel</button>
+  </div>
+
+  <div class="win-message" id="winMessage">🎉 Geschafft! Alle Paare gefunden.</div>
+
+  <div class="board" id="board"></div>
+</div>
+
+<script>
+  (function () {
+    const PAIR_COUNT = 8;
+    const FLIP_BACK_DELAY = 900;
+
+    const boardEl = document.getElementById('board');
+    const movesValueEl = document.getElementById('movesValue');
+    const pairsValueEl = document.getElementById('pairsValue');
+    const winMessageEl = document.getElementById('winMessage');
+    const newGameBtn = document.getElementById('newGameBtn');
+
+    let cards = [];
+    let flippedCards = [];
+    let matchedCount = 0;
+    let moves = 0;
+    let boardLocked = false;
+
+    function createShuffledValues() {
+      const values = [];
+      for (let i = 1; i <= PAIR_COUNT; i++) {
+        values.push(i, i);
+      }
+      for (let i = values.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [values[i], values[j]] = [values[j], values[i]];
+      }
+      return values;
+    }
+
+    function buildBoard() {
+      boardEl.innerHTML = '';
+      cards = [];
+      flippedCards = [];
+      matchedCount = 0;
+      moves = 0;
+      boardLocked = false;
+
+      updateStats();
+      winMessageEl.classList.remove('show');
+
+      const values = createShuffledValues();
+
+      values.forEach((value, index) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.index = String(index);
+        card.dataset.value = String(value);
+
+        card.innerHTML = `
+          <div class="card-inner">
+            <div class="card-face card-back">?</div>
+            <div class="card-face card-front">${value}</div>
+          </div>
+        `;
+
+        card.addEventListener('click', () => onCardClick(card));
+        boardEl.appendChild(card);
+        cards.push(card);
+      });
+    }
+
+    function onCardClick(card) {
+      if (boardLocked) return;
+      if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
+      if (flippedCards.length === 2) return;
+
+      card.classList.add('flipped');
+      flippedCards.push(card);
+
+      if (flippedCards.length === 2) {
+        moves++;
+        updateStats();
+        checkForMatch();
+      }
+    }
+
+    function checkForMatch() {
+      const [first, second] = flippedCards;
+      const isMatch = first.dataset.value === second.dataset.value;
+
+      if (isMatch) {
+        first.classList.add('matched');
+        second.classList.add('matched');
+        flippedCards = [];
+        matchedCount++;
+        updateStats();
+
+        if (matchedCount === PAIR_COUNT) {
+          winMessageEl.classList.add('show');
+        }
+      } else {
+        boardLocked = true;
+        setTimeout(() => {
+          first.classList.remove('flipped');
+          second.classList.remove('flipped');
+          flippedCards = [];
+          boardLocked = false;
+        }, FLIP_BACK_DELAY);
+      }
+    }
+
+    function updateStats() {
+      movesValueEl.textContent = String(moves);
+      pairsValueEl.textContent = `${matchedCount} / ${PAIR_COUNT}`;
+    }
+
+    newGameBtn.addEventListener('click', buildBoard);
+
+    buildBoard();
+  })();
+</script>
+
+</body>
+</html>
